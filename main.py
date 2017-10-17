@@ -7,7 +7,7 @@ heldItems = []
 myHealth = 53
 visitedRooms = []
 
-# ********************************* SET UP THE ROOMS *********************************
+# ** SET UP THE ROOMS *********************************
 
 # Kitchen
 #
@@ -41,10 +41,11 @@ lab.shelf = Container("shelf",["brass key","spork","yellow flashlight"],"on")
 lab.create_room_item("rat")
 yellowFlashlight = Flashlight("yellow",1,True)
 
-# Supply Closet
+# Janitor Closet
 #
-supplycloset = Room("Supply Closet","A small dark room with a musty smell. On one side is a filing CABINET and a large plastic BIN. On the other side is a SHELF with supplies and a SHOEBOX.")
-
+janitorcloset = Room("Janitor Closet","A tiny, dark closet where a janitor can retrive his tools. On one side is a filing CABINET with a poster of the ten commandments. On the other side is a SHELF with supplies and some SULFURIC ACID.")
+janitorcloset.shelf = Container("shelf", ["jesus key", "sulfuric acid"])
+janitorcloset.cabinet = Container("cabinet", ["bible"])
 # Create a fake room called locked that represents all permenently locked doors
 #
 locked = Room("locked","")
@@ -53,11 +54,11 @@ locked = Room("locked","")
 kitchen.link_room(locked, "EAST")
 kitchen.link_room(smalloffice, "SOUTH")
 kitchen.link_room(locked, "WEST")
-supplycloset.link_room(smalloffice, "EAST")
+janitorcloset.link_room(smalloffice, "EAST")
 smalloffice.link_room(kitchen, "NORTH")
 smalloffice.link_room(lab, "EAST")
 smalloffice.link_room(locked, "SOUTH")
-smalloffice.link_room(supplycloset, "WEST")
+smalloffice.link_room(janitorcloset, "WEST")
 lab.link_room(locked, "SOUTH")
 lab.link_room(smalloffice, "WEST")
 current_room = kitchen
@@ -65,8 +66,8 @@ current_room = kitchen
 # Set up characters
 dmitry = Enemy("Dmitry", "A smelly zombie")
 dmitry.set_speech("Brrlgrh... rgrhl... brains...")
-dmitry.set_weaknesses(["FORK","SPORK","KNIFE"])
-supplycloset.set_character(dmitry)
+dmitry.set_weaknesses(["BIBLE","SULFURIC ACID","JESUS KEY"])
+janitorcloset.set_character(dmitry)
 
 # This is a procedure that simply prints the items the player is holding and tells them if they can do something with that item
 def playerItems():
@@ -148,6 +149,14 @@ def checkUserInput(current_room,command,heldItems):
         current_room.room_items += smalloffice.desk.open()
     elif current_room.name == "Small Office" and command == "DESK":
         print("The desk drawer is locked.")
+    elif current_room.name == "Janitor Closet" and command == "SHELF":
+        # Open janitorcloset.shelf and concat each of the contents to the end of room_items
+        print("It looks like there is an old bible in here.  Finally, something good to read.")
+        current_room.room_items += janitorcloset.shelf.open()
+    elif current_room.name == "Janitor Closet" and command == "CABINET":
+        # Open janitorcloset.shelf and concat each of the contents to the end of room_items
+        print("You found a key that belonged to my homeboy Jesus Christ!  Oh, and some sulfuric acid...")
+        current_room.room_items += janitorcloset.cabinet.open()
     elif current_room.name == "Laboratory" and command == "SHELF":
         # Open lab.shelf and concat each of the contents to the end of room_items
         current_room.room_items += lab.shelf.open()
